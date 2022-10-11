@@ -2,6 +2,7 @@ from sqlalchemy import create_engine, Column, Float, Integer, Date, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import csv
+from datetime import datetime
 
 engine = create_engine('sqlite:///inventory.db', echo=False)
 Session = sessionmaker(bind=engine)
@@ -30,15 +31,21 @@ def cleansheet():
             if len(newnie) == 5:
                 newnie[0] = newnie[0] + "," + newnie[1]
                 newnie.remove(newnie[1])
-                print(newnie)
             csvlist.append({'product': newnie[0], 'price': newnie[1], 'quantity': newnie[2], 'date': newnie[3]})
+        # for item in csvlist:
+        #     try:
+        #         item['price'] = int(item['price'])
+        #     except ValueError:
+        #         del item
+        del csvlist[0]
         for item in csvlist:
-            try:
-                item['price'] = int(item['price'])
-            except ValueError:
-                del item
-        print(csvlist)
+            item['price'] = item['price'].replace('$', '')
+            item['price'] = round(float(item['price']), 2)
+            item['quantity'] = int(item['quantity'])
+            item['date'] = datetime.strptime(item['date'], '%m/%d/%Y')
+        return csvlist
 
 if __name__ == '__main__':
     # Base.metadata.create_all(engine)
     cleansheet()
+    # session.add_all(cleansheet())
