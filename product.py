@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import csv
 from datetime import datetime
+import sqlite3
 
 engine = create_engine('sqlite:///inventory.db', echo=False)
 Session = sessionmaker(bind=engine)
@@ -38,14 +39,61 @@ def cleansheet():
         #     except ValueError:
         #         del item
         del csvlist[0]
+        dougie = []
         for item in csvlist:
+            nougie = {'product': None, 'price' : None, 'quantity': None, 'date': None }
+            nougie['product'] = item['product']
             item['price'] = item['price'].replace('$', '')
-            item['price'] = round(float(item['price']), 2)
-            item['quantity'] = int(item['quantity'])
-            item['date'] = datetime.strptime(item['date'], '%m/%d/%Y')
-        return csvlist
+            nougie['price'] = round(float(item['price']), 2)
+            nougie['quantity'] = int(item['quantity'])
+            nougie['date'] = datetime.strptime(item['date'], '%m/%d/%Y')
+            dougie.append(nougie)
+        print(dougie)
+        return dougie
+
+def dictadder(data):
+    dumper = []
+    for item in data:
+        iname = item['product']
+        ipq = item['quantity']
+        iprice = item['price']
+        date = item['date']
+        prod = Product(product_name = iname, product_quantity=ipq, product_price=iprice, date_updated=date)
+        print(prod)
+        dumper.append(prod)
+    session.add_all(dumper)
+    session.commit()
+
+def viewprod(prod):
+    running = True
+    while running == True:
+        connection = sqlite3.connect("inventory.db")
+        crsr = connection.cursor()
+        print("Please enter a product ")
+        for row in crsr.execute("SELECT * FROM Products"):
+            print(row)
+
+def menu():
+    print('''
+----------Inventory Application----------
+Make a selection from the following:
+V = view the details of a single product
+A = add a new product to the database
+B = make a backup of the database.
+''')
+    choice = input("Enter selection:   ")
+
 
 if __name__ == '__main__':
     # Base.metadata.create_all(engine)
-    cleansheet()
-    # session.add_all(cleansheet())
+    # dictadder(cleansheet())
+
+    # connect with the myTable database
+    connection = sqlite3.connect("inventory.db")
+
+    # cursor object
+    crsr = connection.cursor()
+
+    # execute the command to fetch all the data from the table emp
+    for row in crsr.execute("SELECT * FROM Products"):
+        print(row)
