@@ -1,4 +1,13 @@
-import sqlite3
+import sqlalchemy
+from datetime import datetime
+from product import Product
+import models
+from sqlalchemy import create_engine, Column, Float, Integer, Date, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+
+
 
 def viewprod():
     running = True
@@ -24,6 +33,13 @@ def viewprod():
         except ValueError as err:
             print(err)
 
+def addprod():
+    prodname = input("Please type the product name:  ")
+    prodq = input("Now please input the product quantity:  ")
+    prodprice = input("Now enter the price of the product:  ")
+    if crsr.execute(f"select * from Products where product_name like '{prodname}%'") or crsr.execute(f"select * from Products where product_name like '{choice}%'")
+
+
 
 def menu():
     print('''
@@ -37,4 +53,5 @@ B = make a backup of the database.
 
 if __name__ == '__main__':
     # menu()
-    viewprod()
+    # viewprod()
+    models.session.query()
