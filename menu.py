@@ -2,6 +2,7 @@
 import string
 from datetime import datetime
 from product import Base, Product, session, engine
+import re
 
 
 
@@ -31,27 +32,44 @@ def viewprod():
             print(err)
 
 def addprod():
-    try:
-        prodname = input("Please type the product name:  ")
-        if prodname.isalpha() == False:
-            raise ValueError("You must enter letters for the name!")
-    except ValueError as err:
-        print(err)
+    trying = True
+    while trying == True:
+        try:
+            prodname = input("Please type the product name:  ")
+            if prodname.isalpha() == True:
+                trying = False
+            if prodname.isalpha() == False:
+                raise ValueError("You must enter letters for the name!")
+        except ValueError as err:
+            print(err)
 
-    try:
-        prodq = input("Now please input the product quantity:  ")
-        if prodq.isdigit() == False:
-            raise ValueError('Qunatity must be a whole number')
-    except ValueError as err:
-        print(err)
-    try:
-        prodprice = input("Now enter the price of the product:  ")
-        if isinstance(prodprice, float) == False:
-            raise ValueError('You must enter the price in a valid price format')
-    except ValueError as err:
-        print(err)
-        date = datetime.today
-    session.add(Product(product_name = prodname, product_quantity=prodq, product_price=prodprice, date_updated=date))
+    trying = True
+    while trying == True:
+        try:
+            prodq = input("Now please input the product quantity:  ")
+            if prodq.isdigit() == True:
+                trying = False
+            if prodq.isdigit() == False:
+                raise ValueError('Qunatity must be a whole number')
+        except ValueError as err:
+            print(err)
+
+    trying = True
+    while trying == True:
+        try:
+            prodprice = float(input("Now enter the price of the product:  "))
+            checkprod = "{:.2f}".format(prodprice).split('.')
+            if len(checkprod[1]) == 2:
+                trying = False
+            else:
+                raise ValueError('You must enter the price in a valid price format (example 1.00)')
+        except ValueError as err:
+            print(err)
+    pdate = datetime.today
+    for i in pdate:
+        print(i)
+
+    session.add(Product(product_name = prodname, product_quantity=prodq, product_price=prodprice, date_updated=pdate))
 
 
 
@@ -73,3 +91,5 @@ if __name__ == '__main__':
     # menu()
     # viewprod()
     addprod()
+    # for i in session.query(Product):
+    #     print(i)
