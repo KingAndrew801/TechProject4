@@ -33,11 +33,7 @@ def cleansheet():
                 newnie[0] = newnie[0] + "," + newnie[1]
                 newnie.remove(newnie[1])
             csvlist.append({'product': newnie[0], 'price': newnie[1], 'quantity': newnie[2], 'date': newnie[3]})
-        # for item in csvlist:
-        #     try:
-        #         item['price'] = int(item['price'])
-        #     except ValueError:
-        #         del item
+
         del csvlist[0]
         dougie = []
         for item in csvlist:
@@ -48,7 +44,6 @@ def cleansheet():
             nougie['quantity'] = int(item['quantity'])
             nougie['date'] = datetime.strptime(item['date'], '%m/%d/%Y')
             dougie.append(nougie)
-        print(dougie)
         return dougie
 
 def dictadder(data):
@@ -73,27 +68,5 @@ def viewprod(prod):
         for row in crsr.execute("SELECT * FROM Products"):
             print(row)
 
-def menu():
-    print('''
-----------Inventory Application----------
-Make a selection from the following:
-V = view the details of a single product
-A = add a new product to the database
-B = make a backup of the database.
-''')
-    choice = input("Enter selection:   ")
-
-
 if __name__ == '__main__':
-    # Base.metadata.create_all(engine)
-    # dictadder(cleansheet())
-
-    # connect with the myTable database
-    connection = sqlite3.connect("inventory.db")
-
-    # cursor object
-    crsr = connection.cursor()
-
-    # execute the command to fetch all the data from the table emp
-    for row in crsr.execute("SELECT * FROM Products"):
-        print(row)
+    cleansheet()

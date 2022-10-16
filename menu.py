@@ -1,6 +1,6 @@
-
+import csv
 import string
-from datetime import datetime
+from datetime import datetime, date
 from product import Base, Product, session, engine
 import re
 
@@ -65,16 +65,19 @@ def addprod():
                 raise ValueError('You must enter the price in a valid price format (example 1.00)')
         except ValueError as err:
             print(err)
-    pdate = datetime.today
-    for i in pdate:
-        print(i)
-
+    pdate = date.today()
+    if session.query(Product).filter(product_name= prodname) == prodname:
+        session.query(Product).filter(product_name=prodname).delete()
     session.add(Product(product_name = prodname, product_quantity=prodq, product_price=prodprice, date_updated=pdate))
 
-
-
 def backup():
-    pass
+    with open('backup.db', 'a') as csvfile:
+        fieldnames = ['product_name', 'product_id', 'product_quantity', 'product_price', 'date_updated']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+        writer.writeheader()
+        for item in session.query(Product):
+            writer.writerow(item)
 
 def menu():
     print('''
@@ -90,6 +93,7 @@ B = make a backup of the database.
 if __name__ == '__main__':
     # menu()
     # viewprod()
-    addprod()
+    # addprod()
+    backup()
     # for i in session.query(Product):
     #     print(i)
