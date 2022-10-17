@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker
 import csv
 from datetime import datetime
 
+
 engine = create_engine('sqlite:///inventory.db', echo=False)
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -44,6 +45,18 @@ def cleansheet():
             nougie['date'] = datetime.strptime(item['date'], '%m/%d/%Y').date()
             dougie.append(nougie)
         return dougie
+
+def starter(data):
+    dumper = []
+    for item in data:
+        iname = item['product']
+        ipq = item['quantity']
+        iprice = item['price']
+        date = item['date']
+        prod = Product(product_name = iname, product_quantity=ipq, product_price=iprice, date_updated=date)
+        dumper.append(prod)
+    session.add_all(dumper)
+    session.commit()
 
 def dictadder(data):
     dumper = []
