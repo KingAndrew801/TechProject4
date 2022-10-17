@@ -77,7 +77,10 @@ def backup():
 
         writer.writeheader()
         for item in session.query(Product):
-            writer.writerow(item)
+            writer.writerow({
+                'product_name': item[0], 'product_id': item[1],
+                'product_quantity': item [2], 'product_price': item[3],
+                'date_updated':item[4]})
 
 def menu():
     print('''
