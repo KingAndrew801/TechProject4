@@ -3,7 +3,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import csv
 from datetime import datetime
-import sqlite3
 
 engine = create_engine('sqlite:///inventory.db', echo=False)
 Session = sessionmaker(bind=engine)
@@ -42,7 +41,7 @@ def cleansheet():
             item['price'] = item['price'].replace('$', '')
             nougie['price'] = round(float(item['price']), 2)
             nougie['quantity'] = int(item['quantity'])
-            nougie['date'] = datetime.strptime(item['date'], '%m/%d/%Y')
+            nougie['date'] = datetime.strptime(item['date'], '%m/%d/%Y').date()
             dougie.append(nougie)
         return dougie
 
@@ -54,19 +53,19 @@ def dictadder(data):
         iprice = item['price']
         date = item['date']
         prod = Product(product_name = iname, product_quantity=ipq, product_price=iprice, date_updated=date)
-        print(prod)
-        dumper.append(prod)
+        for existprod in session.query(Product):
+            if existprod.product_name == prod.product_name:
+                if prod.date_updated > existprod.date_updated:
+                    session.query(Product).filter(product_name=existprod.product_name).update(
+                        product_quantity=prod.product_quantity, product_price=prod.product_price)
+                    dumper.append(prod)
+                else:
+                    pass
     session.add_all(dumper)
     session.commit()
 
-def viewprod(prod):
-    running = True
-    while running == True:
-        connection = sqlite3.connect("inventory.db")
-        crsr = connection.cursor()
-        print("Please enter a product ")
-        for row in crsr.execute("SELECT * FROM Products"):
-            print(row)
-
 if __name__ == '__main__':
-    cleansheet()
+    dictadder(cleansheet())
+    dictadder(cleansheet())
+    for i in session.query(Product):
+        print(i)
