@@ -56,8 +56,8 @@ def dictadder(data):
         for existprod in session.query(Product):
             if existprod.product_name == prod.product_name:
                 if prod.date_updated > existprod.date_updated:
-                    session.query(Product).filter(product_name=existprod.product_name).update(
-                        product_quantity=prod.product_quantity, product_price=prod.product_price)
+                    session.query(Product).filter(Product.product_id == existprod.product_id).update({
+                        'product_quantity': prod.product_quantity, 'product_price': prod.product_price})
                     dumper.append(prod)
                 else:
                     pass
@@ -66,6 +66,10 @@ def dictadder(data):
 
 if __name__ == '__main__':
     dictadder(cleansheet())
+    for i in session.query(Product):
+        print(i)
     dictadder(cleansheet())
     for i in session.query(Product):
         print(i)
+
+    # print(session.query(Product).filter(product_id=1))
