@@ -30,17 +30,7 @@ def viewprod():
             print(err)
 
 def addprod():
-    trying = True
-    while trying == True:
-        try:
-            prodname = input("Please type the product name:  ")
-            if prodname.isalpha() == True:
-                trying = False
-            if prodname.isalpha() == False:
-                raise ValueError("You must enter letters for the name!")
-        except ValueError as err:
-            print(err)
-
+    prodname = input("Please type the product name:  ")
     trying = True
     while trying == True:
         try:
@@ -66,12 +56,14 @@ def addprod():
     pdate = date.today()
     prod = Product(product_name = prodname, product_quantity=prodq, product_price=prodprice, date_updated=pdate)
     for item in session.query(Product):
-        if item.date_updated < prod.date_updated:
-            session.query(Product).filter(product_id=item.product_id).delete()
-            session.add(prod)
-            session.commit()
-        else:
-            pass
+        if item.product_name == prod.product_name:
+            if item.date_updated < prod.date_updated:
+                session.query(Product).filter(Product.product_id == item.product_id).update({
+                            'product_quantity': prod.product_quantity, 'product_price': prod.product_price})
+                session.add(prod)
+                session.commit()
+            else:
+                pass
 
 
 def backup():
@@ -89,8 +81,7 @@ def backup():
 def menu():
     running = True
     while running:
-        trying1 = True
-        while trying1:
+        while running:
             try:
                 print('''
 ----------Inventory Application----------
@@ -102,13 +93,13 @@ B = make a backup of the database.
                 choice2 = input("Enter selection:   ").lower()
                 if choice2 == 'v':
                     viewprod()
-                    trying1 = False
+                    break
                 if choice2 == 'a':
                     addprod()
-                    trying1 = False
+                    break
                 if choice2 == 'b':
                     backup()
-                    trying1 = False
+                    break
                 else:
                     raise ValueError("You must enter either v, a, or b")
             except ValueError as err:
@@ -118,10 +109,10 @@ B = make a backup of the database.
             try:
                 choice = input('Do you want to choose again?(Y/N):  ').lower()
                 if choice == 'y':
-                    trying = False
+                    break
                 if choice == 'n':
-                    trying2 = False
                     running = False
+                    break
                 else:
                     raise ValueError("You must enter either y or n")
             except ValueError as err:

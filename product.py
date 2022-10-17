@@ -71,5 +71,3 @@ if __name__ == '__main__':
     dictadder(cleansheet())
     for i in session.query(Product):
         print(i)
-
-    # print(session.query(Product).filter(product_id=1))
