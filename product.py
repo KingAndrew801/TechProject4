@@ -78,6 +78,7 @@ def dictadder(data):
     session.commit()
 
 if __name__ == '__main__':
+    Base.metadata.create_all(engine)
     dictadder(cleansheet())
     for i in session.query(Product):
         print(i)
