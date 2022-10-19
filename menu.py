@@ -15,11 +15,11 @@ def viewprod():
             for item in session.query(Product).filter(Product.product_name.like(choice)):
                 print(item)
         else:
-            for item in session.query(Product).filter(Product.product_id == int(choice)):
-                if item:
+            if session.query(Product).filter(Product.product_id == int(choice)).one_or_none():
+                 for item in session.query(Product).filter(Product.product_id == int(choice)):
                     print(item)
-                if not item:
-                    print('There is no product with that ID number.')
+            else:
+                print('There is no product with that ID number.')
         try:
             choice = input("Do you want to search for another product? (Y/N)  ").lower()
             if choice == 'y':
