@@ -1,5 +1,5 @@
 import csv
-from datetime import date
+from datetime import datetime
 
 import product
 from product import Base, Product, session, dictadder, cleansheet, engine,starter
@@ -15,8 +15,11 @@ def viewprod():
             for item in session.query(Product).filter(Product.product_name.like(choice)):
                 print(item)
         else:
-            for item in session.query(Product).filter(Product.product_id == int(choice)):
-                print(item)
+            if session.query(Product).filter(Product.product_id == int(choice)):
+                if item:
+                    print(item)
+                if not item:
+                    print('There is no product with that ID number.')
         try:
             choice = input("Do you want to search for another product? (Y/N)  ").lower()
             if choice == 'y':
@@ -53,21 +56,25 @@ def addprod():
                 raise ValueError('You must enter the price in a valid price format (example 1.00)')
         except ValueError as err:
             print(err)
-    pdate = date.today()
+    pdate = datetime.today()
     prod = Product(product_name = prodname, product_quantity=prodq, product_price=prodprice, date_updated=pdate)
     for item in session.query(Product):
         if item.product_name == prod.product_name:
-            if item.date_updated < prod.date_updated:
+            if item.date_updated <= prod.date_updated:
                 session.query(Product).filter(Product.product_id == item.product_id).update({
                             'product_quantity': prod.product_quantity, 'product_price': prod.product_price})
                 session.add(prod)
                 session.commit()
+                print('\n Your product has been added to the database!')
             else:
                 pass
-
+        else:
+            session.add(prod)
+            session.commit()
+            print('\n Your product has been added to the database!')
 
 def backup():
-    with open('backup.db', 'a') as csvfile:
+    with open('backup.csv', 'a') as csvfile:
         fieldnames = ['product_name', 'product_id', 'product_quantity', 'product_price', 'date_updated']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
@@ -76,7 +83,7 @@ def backup():
             writer.writerow({
                 'product_name': item.product_name, 'product_id': item.product_id,
                 'product_quantity': item.product_quantity, 'product_price': item.product_price,
-                'date_updated':item.date_updated})
+                'date_updated':str(item.date_updated)})
 
 def menu():
     starter(product.cleansheet())

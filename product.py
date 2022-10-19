@@ -40,9 +40,9 @@ def cleansheet():
             nougie = {'product': None, 'price' : None, 'quantity': None, 'date': None }
             nougie['product'] = item['product']
             item['price'] = item['price'].replace('$', '')
-            nougie['price'] = round(float(item['price']), 2)
+            nougie['price'] = int(item['price'].replace('.', ''))
             nougie['quantity'] = int(item['quantity'])
-            nougie['date'] = datetime.strptime(item['date'], '%m/%d/%Y').date()
+            nougie['date'] = datetime.strptime(item['date'], '%m/%d/%Y')
             dougie.append(nougie)
         return dougie
 
