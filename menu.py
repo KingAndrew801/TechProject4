@@ -15,7 +15,7 @@ def viewprod():
             for item in session.query(Product).filter(Product.product_name.like(choice)):
                 print(item)
         else:
-            if session.query(Product).filter(Product.product_id == int(choice)):
+            for item in session.query(Product).filter(Product.product_id == int(choice)):
                 if item:
                     print(item)
                 if not item:
