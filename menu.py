@@ -2,7 +2,7 @@ import csv
 from datetime import datetime
 
 import product
-from product import Base, Product, session, dictadder, cleansheet, engine,starter
+from product import Base, Product, session, dictadder, cleansheet, engine
 
 
 def viewprod():

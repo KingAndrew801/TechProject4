@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Float, Integer, Date, String
+from sqlalchemy import create_engine, Column, Float, Integer, DateTime, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import csv
@@ -16,8 +16,9 @@ class Product(Base):
     product_id = Column(Integer, primary_key=True)
     product_name = Column(String)
     product_quantity = Column(Integer)
-    product_price = Column(Float)
-    date_updated = Column(Date)
+    product_price = Column(Integer
+                           )
+    date_updated = Column(DateTime)
 
     def __repr__(self):
         return f'{self.product_name}, Qty= {self.product_quantity}, Price= {self.product_price}, Update= {self.date_updated}'
@@ -46,29 +47,16 @@ def cleansheet():
             dougie.append(nougie)
         return dougie
 
-def starter(data):
-    dumper = []
-    for item in data:
-        iname = item['product']
-        ipq = item['quantity']
-        iprice = item['price']
-        date = item['date']
-        prod = Product(product_name = iname, product_quantity=ipq, product_price=iprice, date_updated=date)
-        dumper.append(prod)
-    session.add_all(dumper)
-    session.commit()
-
 def dictadder(data):
     dumper = []
-    count = 0
     for item in data:
-        count+=1
         iname = item['product']
         ipq = item['quantity']
         iprice = item['price']
         date = item['date']
         prod = Product(product_name = iname, product_quantity=ipq, product_price=iprice, date_updated=date)
         if session.query(Product).first():
+            print(prod.product_name + "was compared")
             for existprod in session.query(Product):
                 if existprod.product_name == prod.product_name:
                     if prod.date_updated >= existprod.date_updated:
