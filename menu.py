@@ -80,7 +80,6 @@ def backup():
 
         writer.writeheader()
         for item in session.query(Product):
-            print(item.product_price)
             if len(str(item.product_price)) >= 3:
                 newp =  '$' + str(item.product_price)[:-2] + '.' + str(item.product_price)[1:]
             if len(str(item.product_price)) == 2:
