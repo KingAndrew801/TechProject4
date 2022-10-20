@@ -56,20 +56,22 @@ def dictadder(data):
         date = item['date']
         prod = Product(product_name = iname, product_quantity=ipq, product_price=iprice, date_updated=date)
         if session.query(Product).first():
-            print(prod.product_name + "was compared")
-            for existprod in session.query(Product):
-                if existprod.product_name == prod.product_name:
-                    if prod.date_updated >= existprod.date_updated:
-                        session.query(Product).filter(Product.product_id == existprod.product_id).update({
-                            'product_quantity': prod.product_quantity, 'product_price': prod.product_price})
-                        dumper.append(prod)
-                    else:
-                        pass
-                else:
-                    dumper.append(prod)
-        else: dumper.append(prod)
-    session.add_all(dumper)
-    session.commit()
+            if matchchecker(prod):
+               if prod.date_updated >= matchchecker(prod).date_updated:
+                    session.query(Product).filter(Product.product_name == matchchecker(prod).product_name).update({
+                        'product_quantity': prod.product_quantity, 'product_price': prod.product_price})
+            else:
+                 session.add(prod)
+                 session.commit()
+        else:
+            session.add(prod)
+            session.commit()
+
+def matchchecker(psearch):
+    for item in session.query(Product):
+        if item.product_name == psearch.product_name:
+            return item
+
 
 if __name__ == '__main__':
     Base.metadata.create_all(engine)

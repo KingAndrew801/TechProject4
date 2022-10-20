@@ -80,10 +80,17 @@ def backup():
 
         writer.writeheader()
         for item in session.query(Product):
+            print(item.product_price)
+            if len(str(item.product_price)) >= 3:
+                newp =  '$' + str(item.product_price)[:-2] + '.' + str(item.product_price)[1:]
+            if len(str(item.product_price)) == 2:
+                newp = '$' + '0.' + str(item.product_price)
+            if len(str(item.product_price)) == 1:
+                newp = '$' + '0.0' + str(item.product_price)
             writer.writerow({
                 'product_id': item.product_id, 'product_name': item.product_name,
-                'product_price': item.product_price, 'product_quantity': item.product_quantity,
-                'date_updated':str(item.date_updated)})
+                'product_price': newp, 'product_quantity': item.product_quantity,
+                'date_updated':str(datetime.date(item.date_updated))})
 
 def menu():
     dictadder(product.cleansheet())
