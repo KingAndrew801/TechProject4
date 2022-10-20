@@ -71,7 +71,7 @@ def addprod():
         else:
             session.add(prod)
             session.commit()
-            print('\n Your product has been added to the database!')
+    print('\n Your product has been added to the database!')
 
 def backup():
     with open('backup.csv', 'a') as csvfile:
@@ -86,7 +86,7 @@ def backup():
                 'date_updated':str(item.date_updated)})
 
 def menu():
-    starter(product.cleansheet())
+    dictadder(product.cleansheet())
     running = True
     while running:
         while running:

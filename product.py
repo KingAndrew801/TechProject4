@@ -60,20 +60,26 @@ def starter(data):
 
 def dictadder(data):
     dumper = []
+    count = 0
     for item in data:
+        count+=1
         iname = item['product']
         ipq = item['quantity']
         iprice = item['price']
         date = item['date']
         prod = Product(product_name = iname, product_quantity=ipq, product_price=iprice, date_updated=date)
-        for existprod in session.query(Product):
-            if existprod.product_name == prod.product_name:
-                if prod.date_updated > existprod.date_updated:
-                    session.query(Product).filter(Product.product_id == existprod.product_id).update({
-                        'product_quantity': prod.product_quantity, 'product_price': prod.product_price})
-                    dumper.append(prod)
+        if session.query(Product).first():
+            for existprod in session.query(Product):
+                if existprod.product_name == prod.product_name:
+                    if prod.date_updated >= existprod.date_updated:
+                        session.query(Product).filter(Product.product_id == existprod.product_id).update({
+                            'product_quantity': prod.product_quantity, 'product_price': prod.product_price})
+                        dumper.append(prod)
+                    else:
+                        pass
                 else:
-                    pass
+                    dumper.append(prod)
+        else: dumper.append(prod)
     session.add_all(dumper)
     session.commit()
 
