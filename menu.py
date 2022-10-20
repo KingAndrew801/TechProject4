@@ -75,14 +75,14 @@ def addprod():
 
 def backup():
     with open('backup.csv', 'a') as csvfile:
-        fieldnames = ['product_name', 'product_id', 'product_quantity', 'product_price', 'date_updated']
+        fieldnames = [ 'product_id', 'product_name', 'product_price', 'product_quantity', 'date_updated']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
         writer.writeheader()
         for item in session.query(Product):
             writer.writerow({
-                'product_name': item.product_name, 'product_id': item.product_id,
-                'product_quantity': item.product_quantity, 'product_price': item.product_price,
+                'product_id': item.product_id, 'product_name': item.product_name,
+                'product_price': item.product_price, 'product_quantity': item.product_quantity,
                 'date_updated':str(item.date_updated)})
 
 def menu():
