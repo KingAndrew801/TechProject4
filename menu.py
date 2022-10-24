@@ -2,7 +2,7 @@ import csv
 from datetime import datetime
 
 import product
-from product import Base, Product, session, dictadder, cleansheet, engine
+from product import Base, Product, session, dictadder, cleansheet, engine, matchchecker
 
 
 def viewprod():
@@ -58,24 +58,21 @@ def addprod():
             print(err)
     pdate = datetime.today()
     prod = Product(product_name = prodname, product_quantity=prodq, product_price=prodprice, date_updated=pdate)
-    for item in session.query(Product):
-        if item.product_name == prod.product_name:
-            if item.date_updated <= prod.date_updated:
-                session.query(Product).filter(Product.product_id == item.product_id).update({
-                            'product_quantity': prod.product_quantity, 'product_price': prod.product_price})
-                session.add(prod)
-                session.commit()
-                print('\n Your product has been added to the database!')
-            else:
-                pass
+    if matchchecker(prod):
+        if matchchecker(prod).date_updated <= prod.date_updated:
+            session.query(Product).filter(Product.product_id == matchchecker(prod).product_id).update({
+                        'product_quantity': prod.product_quantity, 'product_price': prod.product_price})
+            print('\n Your product has been updated!')
         else:
-            session.add(prod)
-            session.commit()
-    print('\n Your product has been added to the database!')
+            pass
+    else:
+        session.add(prod)
+        session.commit()
+        print('\n Your product has been added to the database!')
 
 def backup():
-    with open('backup.csv', 'a') as csvfile:
-        fieldnames = [ 'product_id', 'product_name', 'product_price', 'product_quantity', 'date_updated']
+    with open('backup.csv', 'a', newline='') as csvfile:
+        fieldnames = [ 'product_name', 'product_price', 'product_quantity', 'date_updated']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
         writer.writeheader()
@@ -87,9 +84,9 @@ def backup():
             if len(str(item.product_price)) == 1:
                 newp = '$' + '0.0' + str(item.product_price)
             writer.writerow({
-                'product_id': item.product_id, 'product_name': item.product_name,
+                'product_name': item.product_name,
                 'product_price': newp, 'product_quantity': item.product_quantity,
-                'date_updated':str(datetime.date(item.date_updated))})
+                'date_updated':str(datetime.strftime(item.date_updated, '%m/%d/%Y'))})
 
 def menu():
     dictadder(product.cleansheet())
@@ -134,6 +131,3 @@ B = make a backup of the database.
 
 if __name__ == '__main__':
     menu()
-    # viewprod()
-    # addprod()
-    # backup()

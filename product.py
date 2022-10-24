@@ -69,7 +69,9 @@ def dictadder(data):
 
 def matchchecker(psearch):
     for item in session.query(Product):
-        if item.product_name == psearch.product_name:
+        if str(item.product_name).lower() == str(psearch.product_name).lower():
+            print(str(item.product_name).lower())
+            print(str(psearch.product_name).lower())
             return item
 
 
