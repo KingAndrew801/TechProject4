@@ -16,8 +16,7 @@ class Product(Base):
     product_id = Column(Integer, primary_key=True)
     product_name = Column(String)
     product_quantity = Column(Integer)
-    product_price = Column(Integer
-                           )
+    product_price = Column(Integer)
     date_updated = Column(DateTime)
 
     def __repr__(self):
@@ -59,7 +58,7 @@ def dictadder(data):
             if matchchecker(prod):
                if prod.date_updated >= matchchecker(prod).date_updated:
                     session.query(Product).filter(Product.product_name == matchchecker(prod).product_name).update({
-                        'product_quantity': prod.product_quantity, 'product_price': prod.product_price})
+                        'product_quantity': prod.product_quantity, 'product_price': prod.product_price,'date_updated': date})
             else:
                  session.add(prod)
                  session.commit()
