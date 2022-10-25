@@ -61,7 +61,7 @@ def addprod():
     if matchchecker(prod):
         if matchchecker(prod).date_updated <= prod.date_updated:
             session.query(Product).filter(Product.product_id == matchchecker(prod).product_id).update({
-                        'product_quantity': prod.product_quantity, 'product_price': prod.product_price})
+                        'product_quantity': prod.product_quantity, 'product_price': prod.product_price, 'date_updated':pdate})
             print('\n Your product has been updated!')
         else:
             pass
